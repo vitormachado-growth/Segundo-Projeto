@@ -139,25 +139,28 @@
 
 /* --- TESTIMONIALS SECTION --- */
 .testimonialsSection {
-  padding: 6rem 2rem;
-  background-color: var(--bg-primary); /* Dark primary background */
+  padding: 4rem 1rem;
+  background-color: var(--bg-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden; /* Prevent horizontal scrollbar on the page body */
+  overflow: hidden;
+  width: 100%;
 }
 
 .testimonialsTrack {
   width: 100%;
-  max-width: 1200px;
   display: flex;
-  gap: 30px;
-  padding: 20px 10px;
+  gap: 20px;
+  padding: 20px 20px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent-color) var(--bg-secondary);
+  scrollbar-width: none; /* Hide scrollbar for a cleaner mobile look */
+}
+
+.testimonialsTrack::-webkit-scrollbar {
+  display: none;
 }
 
 .testimonialsTrack::-webkit-scrollbar {
@@ -205,6 +208,12 @@
 
 /* Mobile Adaptation */
 @media (max-width: 968px) {
+  .aboutSection,
+  .testimonialsSection,
+  .pricingSection {
+    padding-top: 280px; /* Safe distance for the 140px logo + 30px top + title height */
+  }
+
   .aboutContainer {
     flex-direction: column;
     gap: 50px;

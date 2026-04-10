@@ -184,6 +184,64 @@
 
   .mobileMenuBtn {
     display: block;
-    color: var(--text-primary);
+    color: var(--accent-color);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1001; /* Above the overlay content */
+    padding: 10px;
   }
+}
+
+/* Mobile Overlay Styles */
+.mobileOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobileOverlayOpen {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobileMenuContent {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+.mobileLink {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 24px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: color 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.mobileLink:hover {
+  color: var(--accent-color);
+}
+
+.mobileLink svg {
+  color: var(--accent-color);
 }

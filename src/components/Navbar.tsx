@@ -9,12 +9,14 @@ import {
   Calendar, 
   Crown, 
   MapPin, 
-  Menu 
+  Menu,
+  X
 } from 'lucide-react';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,7 +26,10 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
   return (
+    <>
     <nav className={`${styles.navbarContainer} ${scrolled ? styles.navbarScrolled : ''}`}>
       <div className={styles.navPill}>
         {/* Left Links */}
@@ -73,11 +78,36 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button (Only visible on small screens) */}
-        <button className={styles.mobileMenuBtn}>
-          <Menu size={24} />
+        <button className={styles.mobileMenuBtn} onClick={toggleMenu}>
+          {menuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
     </nav>
+
+    {/* Mobile Menu Overlay */}
+    <div className={`${styles.mobileOverlay} ${menuOpen ? styles.mobileOverlayOpen : ''}`}>
+      <div className={styles.mobileMenuContent}>
+        <Link href="/" className={styles.mobileLink} onClick={toggleMenu}>
+          <Home size={24} /> Início
+        </Link>
+        <Link href="#about" className={styles.mobileLink} onClick={toggleMenu}>
+          <Info size={24} /> Sobre
+        </Link>
+        <Link href="/servicos" className={styles.mobileLink} onClick={toggleMenu}>
+          <Scissors size={24} /> Serviços
+        </Link>
+        <Link href="/clube" className={styles.mobileLink} onClick={toggleMenu}>
+          <Crown size={24} /> Clube
+        </Link>
+        <Link href="/login" className={styles.mobileLink} onClick={toggleMenu}>
+          <Calendar size={24} /> Agendar
+        </Link>
+        <Link href="#units" className={styles.mobileLink} onClick={toggleMenu}>
+          <MapPin size={24} /> Unidades
+        </Link>
+      </div>
+    </div>
+    </>
   );
 };
 

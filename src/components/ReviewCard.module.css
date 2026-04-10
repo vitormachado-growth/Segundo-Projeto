@@ -2,11 +2,12 @@
   background-color: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
-  padding: 30px;
-  min-width: 320px;
+  padding: 24px;
+  min-width: 280px;
+  width: 80vw;
   max-width: 350px;
   flex: 0 0 auto;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   display: flex;
   flex-direction: column;
   gap: 15px;

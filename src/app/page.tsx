@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import PricingCard from '@/components/PricingCard';
-import ReviewCard from '@/components/ReviewCard';
 import Navbar from '@/components/Navbar';
 import ScrollReveal from '@/components/ScrollReveal';
+import TestimonialsCarousel from '@/components/TestimonialsCarousel';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -31,6 +31,29 @@ export default function Home() {
       price: 'R$ 20',
       image: 'https://i.pinimg.com/736x/12/44/23/124423cf42774e5357d58257319302f5.jpg'
     },
+  ];
+
+  const reviews = [
+    { 
+      name: "Wendell Henrique",
+      date: "há 1 dia",
+      text: "Um ótimo profissional, atencioso, detalhista, sempre disposto a te entregar o melhor corte e sempre mantendo o bom humor e o respeito no seu espaço."
+    },
+    { 
+      name: "Alex Carvalho",
+      date: "há uma semana",
+      text: "Ambiente agradável, com excelentes profissionais e um excelente atendimento! Meu filho de 2 aninhos também corta e adora o Vitor e todos."
+    },
+    { 
+      name: "Bruno Xavier",
+      date: "há um mês",
+      text: "Trabalho excelente ! Extremamente detalhista, tem amor a profissão. O que hoje em dia é difícil, o de costume é o corte de 15 minutos que não tem nenhum detalhe, totalmente diferente do Vitor."
+    },
+    { 
+      name: "Andressa Fernandes",
+      date: "há 3 meses",
+      text: "O melhor da região, ambiente tranquilo, serviço ótimo, com direito a cervejinha estupidamente gelada, e sinuca. Muito show !"
+    }
   ];
 
   return (
@@ -93,28 +116,7 @@ export default function Home() {
       <section id="testimonials" className={styles.testimonialsSection}>
         <ScrollReveal animation="fade-up">
           <h2 className={`${styles.sectionTitle} heading-display`}>O QUE DIZEM SOBRE NÓS</h2>
-          <div className={styles.testimonialsTrack}>
-            <ReviewCard 
-              name="Wendell Henrique"
-              date="há 1 dia"
-              text="Um ótimo profissional, atencioso, detalhista, sempre disposto a te entregar o melhor corte e sempre mantendo o bom humor e o respeito no seu espaço."
-            />
-            <ReviewCard 
-              name="Alex Carvalho"
-              date="há uma semana"
-              text="Ambiente agradável, com excelentes profissionais e um excelente atendimento! Meu filho de 2 aninhos também corta e adora o Vitor e todos."
-            />
-            <ReviewCard 
-              name="Bruno Xavier"
-              date="há um mês"
-              text="Trabalho excelente ! Extremamente detalhista, tem amor a profissão. O que hoje em dia é difícil, o de costume é o corte de 15 minutos que não tem nenhum detalhe, totalmente diferente do Vitor."
-            />
-            <ReviewCard 
-              name="Andressa Fernandes"
-              date="há 3 meses"
-              text="O melhor da região, ambiente tranquilo, serviço ótimo, com direito a cervejinha estupidamente gelada, e sinuca. Muito show !"
-            />
-          </div>
+          <TestimonialsCarousel reviews={reviews} />
         </ScrollReveal>
       </section>
 
