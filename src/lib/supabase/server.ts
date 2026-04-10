@@ -1,38 +1,42 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-export async function createClient() {
-  const cookieStore = await cookies()
+// Cliente dummy para fase de build onde as variáveis de ambiente não estão disponíveis
+const dummyClient = {
+  auth: {
+    getUser: async () => ({ data: { user: null }, error: null }),
+    getSession: async () => ({ data: { session: null }, error: null }),
+    exchangeCodeForSession: async () => ({ data: null, error: null }),
+  },
+} as any
 
+export async function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+  // Retorna um cliente dummy durante o build para evitar erros de pré-renderização
   if (!url || !key) {
-    // Return a proxy or dummy client to prevent build-time crashes if variables are missing
-    // But warning is already enough if the lib handles empty strings
-    console.warn('Supabase URL or Key missing in server client (Build time?)')
+    console.warn('[Supabase Server] Variáveis de ambiente ausentes — usando cliente dummy (build time)')
+    return dummyClient
   }
 
-  return createServerClient(
-    url || 'https://placeholder.supabase.co',
-    key || 'pk_placeholder_key',
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
-        },
+  const cookieStore = await cookies()
+
+  return createServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
       },
-    }
-  )
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          )
+        } catch {
+          // Chamado de um Server Component — pode ser ignorado se o middleware
+          // estiver atualizando as sessões de usuário.
+        }
+      },
+    },
+  })
 }
