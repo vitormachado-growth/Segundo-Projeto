@@ -14,55 +14,59 @@ export default function AuthCallbackPage() {
 
     const handleAuth = async () => {
       try {
-        // Pega o código de autorização da URL (PKCE flow)
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        const errorParam = params.get('error');
-        const errorDescription = params.get('error_description');
-
         console.log('[Auth Callback] URL:', window.location.href);
-        console.log('[Auth Callback] Code:', code ? 'presente' : 'ausente');
+
+        // No fluxo Implicit, o token vem no HASH da URL (#access_token=...)
+        // O Supabase JS detecta automaticamente o hash e cria a sessão
+        const hash = window.location.hash;
+        console.log('[Auth Callback] Hash:', hash ? 'presente' : 'ausente');
+
+        // Aguarda um momento para o Supabase processar o hash
+        setStatus('Processando autenticação...');
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Verifica se a sessão foi criada com sucesso
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log('[Auth Callback] Session:', !!session, sessionError?.message);
+
+        if (session) {
+          setStatus('Sessão criada! Redirecionando...');
+          router.push('/dashboard');
+          return;
+        }
+
+        // Verifica se há erro no hash (ex: #error=access_denied)
+        const params = new URLSearchParams(hash.replace('#', ''));
+        const errorParam = params.get('error');
+        const errorDesc = params.get('error_description');
 
         if (errorParam) {
-          console.error('[Auth Callback] Erro do OAuth:', errorParam, errorDescription);
-          setError(`Erro OAuth: ${errorDescription || errorParam}`);
+          setError(`Erro OAuth: ${errorDesc || errorParam}`);
           setTimeout(() => router.push('/login?error=oauth_error'), 3000);
           return;
         }
 
+        // Fallback: tenta a query string (caso venha como ?code= em PKCE)
+        const code = new URLSearchParams(window.location.search).get('code');
         if (code) {
           setStatus('Trocando código por sessão...');
           const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          console.log('[Auth Callback] Exchange result:', { data, exchangeError });
-
-          if (exchangeError) {
-            console.error('[Auth Callback] Erro na troca:', exchangeError.message);
-            setError(`Erro na autenticação: ${exchangeError.message}`);
-            setTimeout(() => router.push('/login?error=exchange_failed'), 3000);
-            return;
-          }
-
-          if (data.session) {
-            setStatus('Sessão criada! Redirecionando...');
+          if (data?.session) {
             router.push('/dashboard');
             return;
           }
+          if (exchangeError) {
+            setError(`Erro: ${exchangeError.message}`);
+            setTimeout(() => router.push('/login?error=exchange_failed'), 3000);
+            return;
+          }
         }
 
-        // Verifica se já tem sessão ativa (fallback)
-        setStatus('Verificando sessão existente...');
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        console.log('[Auth Callback] Session check:', { session: !!session, sessionError });
+        setError('Nenhuma sessão encontrada. Tente novamente.');
+        setTimeout(() => router.push('/login?error=no_session'), 3000);
 
-        if (session) {
-          setStatus('Sessão encontrada! Redirecionando...');
-          router.push('/dashboard');
-        } else {
-          setError('Nenhuma sessão encontrada. Tente fazer login novamente.');
-          setTimeout(() => router.push('/login?error=no_session'), 3000);
-        }
       } catch (err: any) {
-        console.error('[Auth Callback] Erro inesperado:', err);
+        console.error('[Auth Callback] Erro:', err);
         setError(`Erro inesperado: ${err.message}`);
         setTimeout(() => router.push('/login?error=unexpected'), 3000);
       }
