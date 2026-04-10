@@ -1,0 +1,189 @@
+.navbarContainer {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 95%;
+  max-width: 1600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all var(--transition-normal);
+}
+
+.navPill {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 60px;
+  padding: 10px 80px; /* Wider lateral padding */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 220px; /* More space in the middle for the absolute logo and breathing room */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  position: relative;
+  transition: all var(--transition-normal);
+  min-height: 80px; 
+}
+
+/* Ion glow effect on border */
+.navPill::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50px;
+  background: linear-gradient(45deg, transparent, var(--accent-color), transparent, var(--accent-color), transparent);
+  background-size: 200% 200%;
+  z-index: -1;
+  opacity: 0.15;
+  animation: glowMove 6s linear infinite;
+}
+
+@keyframes glowMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.navGroup {
+  display: flex;
+  align-items: center;
+  gap: 60px; /* Increased lateral spacing between icons */
+  flex: 1;
+}
+
+.leftGroup {
+  justify-content: flex-end;
+}
+
+.rightGroup {
+  justify-content: flex-start;
+}
+
+.navLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  position: relative;
+  /* Fix for the SVG/PNG blur on hardware acceleration during transition */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.navLink span {
+  font-family: var(--font-sans);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all var(--transition-normal);
+  position: absolute;
+  bottom: -24px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.navLink:hover {
+  color: var(--accent-color);
+  transform: translate3d(0, -5px, 0);
+}
+
+.navLink:hover span {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.navLink svg {
+  width: 22px;
+  height: 22px;
+  transition: transform var(--transition-fast);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.navLink:hover svg {
+  transform: scale3d(1.1, 1.1, 1);
+}
+
+.logoContainer {
+  position: absolute;
+  left: 50%;
+  top: 10px; /* Adjust to let it break out */
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.logoLink {
+  text-decoration: none;
+  display: block;
+  z-index: 100;
+}
+
+.logoCircle {
+  width: 140px;
+  height: 140px;
+  background-color: var(--bg-primary);
+  border: 3px solid var(--accent-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Strong 3D shadow */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(212, 175, 55, 0.3);
+  transition: all var(--transition-normal);
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Hardware acceleration to prevent image scaling blur */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: scale3d(1.15, 1.15, 1);
+  will-change: transform;
+  transition: transform var(--transition-normal);
+}
+
+.logoCircle:hover {
+  transform: translate3d(0, 5px, 0); /* Keeping the subtle float transition without scaling */
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.95), 0 0 20px rgba(212, 175, 55, 0.6);
+  border-color: #fff;
+}
+
+/* Mobile Toggle - HIDDEN BY DEFAULT */
+.mobileMenuBtn {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .navGroup {
+    display: none;
+  }
+  
+  .logoContainer {
+    padding: 0;
+  }
+
+  .navPill {
+    padding: 10px 20px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .mobileMenuBtn {
+    display: block;
+    color: var(--text-primary);
+  }
+}

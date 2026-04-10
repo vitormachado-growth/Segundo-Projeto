@@ -1,0 +1,21 @@
+/* Initial state: Hidden and shifted down */
+.revealBase {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Luxurious, slow, graceful curve */
+}
+
+/* Animations */
+.fadeUp {
+  transform: translateY(60px);
+}
+
+.fadeIn {
+  transform: translateY(0);
+}
+
+/* Revealed state: Visible and centered */
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}

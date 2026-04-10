@@ -1,0 +1,161 @@
+.cardContainer {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.cardContainer:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* Header Variants */
+.header {
+  padding: 40px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.priceContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  color: #fff;
+  font-family: var(--font-sans);
+}
+
+.currency {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.price {
+  font-size: 4.5rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.period {
+  font-size: 1rem;
+  font-weight: 500;
+  align-self: flex-end;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+/* Thematic Colors */
+.headerBronze {
+  background: linear-gradient(135deg, #cd7f32 0%, #8b5a2b 100%);
+}
+
+.headerSilver {
+  background: linear-gradient(135deg, #a0a5a9 0%, #686e74 100%);
+}
+
+.headerGold {
+  background: linear-gradient(135deg, #e6c27a 0%, #b8860b 100%);
+}
+
+.popularBadge {
+  position: absolute;
+  top: 15px;
+  right: -35px;
+  background-color: #000;
+  color: var(--accent-color);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 5px 40px;
+  transform: rotate(45deg);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Body & Features */
+.body {
+  padding: 40px 30px;
+  flex: 1;
+  background-color: rgba(10, 10, 10, 0.6);
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.featureItem svg {
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.featureText {
+  flex: 1;
+}
+
+/* Footer & Button */
+.footer {
+  padding: 0 30px 40px;
+  background-color: rgba(10, 10, 10, 0.6);
+  text-align: center;
+}
+
+.subscribeBtn {
+  display: inline-block;
+  width: 100%;
+  padding: 16px 0;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  border: none;
+  cursor: pointer;
+}
+
+.btnBronze {
+  background-color: #cd7f32;
+  color: #fff;
+}
+.btnBronze:hover { background-color: #b8732d; }
+
+.btnSilver {
+  background-color: #a0a5a9;
+  color: #fff;
+}
+.btnSilver:hover { background-color: #8c9094; }
+
+.btnGold {
+  background-color: #e6c27a;
+  color: #000;
+}
+.btnGold:hover { background-color: #d4af37; }

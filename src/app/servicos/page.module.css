@@ -1,0 +1,155 @@
+.main {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+.headerHero {
+  padding: 220px 2rem 80px; /* Spaced heavily for the thick navbar */
+  background: radial-gradient(circle at top center, #1a1a1a 0%, #000 100%);
+  text-align: center;
+  position: relative;
+}
+
+.heroOverlay {
+  z-index: 1;
+  position: relative;
+}
+
+.title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.menuSection {
+  padding: 40px 2rem 100px;
+  display: flex;
+  justify-content: center;
+  background-color: #000;
+}
+
+.menuContainer {
+  width: 100%;
+  max-width: 900px; /* Keep it relatively narrowed for good reading typography */
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+.categoryBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.categoryTitle {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--accent-color);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  padding-bottom: 15px;
+  margin-bottom: 40px;
+  letter-spacing: 4px;
+}
+
+.servicesList {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.serviceRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.serviceHead {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+}
+
+.serviceName {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dottedLeader {
+  flex-grow: 1;
+  border-bottom: 2px dotted rgba(212, 175, 55, 0.4); /* The Artesanos effect in Gold */
+  margin: 0 20px;
+  position: relative;
+  top: -6px; /* align dots perfectly behind text baseline */
+}
+
+.servicePrice {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+.serviceDesc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 80%;
+}
+
+.actionBlock {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.btnBack {
+  display: inline-block;
+  padding: 14px 30px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--text-secondary);
+  border-radius: 8px;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 2px;
+  transition: all var(--transition-normal);
+}
+
+.btnBack:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: #fff;
+}
+
+@media (max-width: 768px) {
+  .serviceName, .servicePrice {
+    font-size: 1.1rem;
+  }
+  
+  .dottedLeader {
+    margin: 0 10px;
+  }
+  
+  .serviceDesc {
+    max-width: 100%;
+  }
+  
+  .categoryTitle {
+    font-size: 1.6rem;
+  }
+}
