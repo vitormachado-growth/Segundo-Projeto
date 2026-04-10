@@ -20,6 +20,12 @@ type User = {
 export default function AdminPage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [stats, setStats] = useState({
+    activeClients: 0,
+    appointmentsToday: 0,
+    weeklyBilling: 0
+  });
+  const [recentAppointments, setRecentAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
   const router = useRouter();
@@ -46,13 +52,52 @@ export default function AdminPage() {
 
       setCurrentUser(user);
 
-      // Busca todos os perfis (apenas admins têm acesso)
+      // 1. Busca todos os perfis (para contagem de clientes e lista de usuários)
+      // Usamos contagem exata para Clientes Ativos
       const { data: allProfiles } = await supabase
         .from('profiles')
         .select('full_name, email, role, created_at')
         .order('created_at', { ascending: false });
 
+      const activeUsers = allProfiles?.filter(p => p.role === 'user').length || 0;
+
+      // 2. Busca Agendamentos e Estatísticas (Queries defensivas)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      // Tenta buscar agendamentos de hoje
+      const { data: todayApps, count: todayCount } = await supabase
+        .from('agendamentos')
+        .select('*', { count: 'exact' })
+        .gte('data_hora', today.toISOString())
+        .lt('data_hora', tomorrow.toISOString());
+
+      // Tenta buscar faturamento da semana
+      const weekAgo = new Date(today);
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      const { data: weekApps } = await supabase
+        .from('agendamentos')
+        .select('preco')
+        .gte('data_hora', weekAgo.toISOString());
+
+      const billing = weekApps?.reduce((acc: number, curr: any) => acc + (Number(curr.preco) || 0), 0) || 0;
+
+      // Busca agendamentos recentes para a tabela
+      const { data: latestApps } = await supabase
+        .from('agendamentos')
+        .select('cliente, servico, data_hora, status')
+        .order('data_hora', { ascending: false })
+        .limit(5);
+
       setProfiles(allProfiles || []);
+      setStats({
+        activeClients: activeUsers,
+        appointmentsToday: todayCount || 0,
+        weeklyBilling: billing
+      });
+      setRecentAppointments(latestApps || []);
       setLoading(false);
     };
 
@@ -68,7 +113,7 @@ export default function AdminPage() {
     return (
       <div className={styles.loading}>
         <div className={styles.spinner} />
-        <p>Carregando painel admin...</p>
+        <p>Carregando painel de controle...</p>
       </div>
     );
   }
@@ -77,8 +122,7 @@ export default function AdminPage() {
     <div className={styles.dashboard}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <span className={styles.adminBadge}>👑 Admin</span>
-          <h1 className={`${styles.title} heading-display`}>Painel Administrativo</h1>
+          <h1 className={`${styles.title} heading-display`}>PAINEL DE CONTROLE</h1>
         </div>
         <div className={styles.headerRight}>
           <span className={styles.userEmail}>{currentUser?.email}</span>
@@ -88,25 +132,62 @@ export default function AdminPage() {
 
       <div className={styles.statsGrid}>
         <div className={`${styles.statCard} glass-panel`}>
-          <span className={styles.statTitle}>Total de Usuários</span>
-          <span className={styles.statValue}>{profiles.length}</span>
+          <span className={styles.statTitle}>Agendamentos Hoje</span>
+          <span className={styles.statValue}>{stats.appointmentsToday}</span>
         </div>
         <div className={`${styles.statCard} glass-panel`}>
-          <span className={styles.statTitle}>Admins</span>
-          <span className={styles.statValue}>
-            {profiles.filter(p => p.role === 'admin').length}
-          </span>
+          <span className={styles.statTitle}>Faturamento (Semana)</span>
+          <span className={styles.statValue}>R$ {stats.weeklyBilling}</span>
         </div>
         <div className={`${styles.statCard} glass-panel`}>
-          <span className={styles.statTitle}>Usuários Padrão</span>
-          <span className={styles.statValue}>
-            {profiles.filter(p => p.role === 'user').length}
-          </span>
+          <span className={styles.statTitle}>Clientes Ativos</span>
+          <span className={styles.statValue}>{stats.activeClients}</span>
         </div>
       </div>
 
       <section className={styles.tableSection}>
-        <h2 className="heading-display" style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>
+        <h2 className="heading-display" style={{ fontSize: '1.5rem', marginBottom: '1.5rem', letterSpacing: '0.05em' }}>
+          PRÓXIMOS AGENDAMENTOS
+        </h2>
+        <div className={`${styles.tableContainer} glass-panel`}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Data / Hora</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentAppointments && recentAppointments.length > 0 ? (
+                recentAppointments.map((app, index) => (
+                  <tr key={index}>
+                    <td>{app.cliente}</td>
+                    <td>{app.servico}</td>
+                    <td>{new Date(app.data_hora).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                    <td>
+                      <span className={styles.statusBadge} data-status={app.status}>
+                        {app.status || 'Confirmado'}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-secondary)' }}>
+                    Nenhum agendamento encontrado na tabela 'agendamentos'
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Seção Opcional: Lista de Usuários */}
+      <section className={styles.tableSection} style={{ marginTop: '4rem', opacity: 0.8 }}>
+        <h2 className="heading-display" style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
           Usuários Cadastrados
         </h2>
         <div className={`${styles.tableContainer} glass-panel`}>
@@ -116,7 +197,6 @@ export default function AdminPage() {
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Função</th>
-                <th>Cadastrado em</th>
               </tr>
             </thead>
             <tbody>
@@ -126,10 +206,9 @@ export default function AdminPage() {
                   <td>{profile.email || '—'}</td>
                   <td>
                     <span className={profile.role === 'admin' ? styles.badgeAdmin : styles.badgeUser}>
-                      {profile.role === 'admin' ? '👑 Admin' : '👤 Usuário'}
+                      {profile.role === 'admin' ? '👑 Admin' : '👤 Cliente'}
                     </span>
                   </td>
-                  <td>{new Date(profile.created_at).toLocaleDateString('pt-BR')}</td>
                 </tr>
               ))}
             </tbody>

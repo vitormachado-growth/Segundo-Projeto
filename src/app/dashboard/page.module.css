@@ -1,21 +1,58 @@
 .dashboard {
   min-height: 100vh;
   padding: 2rem;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(212,175,55,0.2);
+  border-top: 4px solid #d4af37;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.userEmail {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }
 
 .title {
-  font-size: 2rem;
+  font-size: 1.75rem;
+  color: var(--accent-color);
 }
 
 .logoutBtn {
@@ -28,56 +65,140 @@
   color: var(--text-primary);
 }
 
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+/* Welcome Section */
+.welcomeSection {
+  margin-bottom: 2.5rem;
 }
 
-.statCard {
-  padding: 1.5rem;
+.welcomeCard {
+  padding: 2rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.statTitle {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-  font-weight: 500;
+.avatarCircle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(212,175,55,0.1);
+  border: 2px solid rgba(212,175,55,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
-.statValue {
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarInitial {
   font-size: 2rem;
   font-weight: 700;
   color: var(--accent-color);
 }
 
-.tableSection {
-  margin-top: 2rem;
+.welcomeTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
 }
 
-.tableContainer {
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 1rem;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.table th,
-.table td {
-  padding: 1rem;
-  border-bottom: 1px solid var(--glass-border);
-}
-
-.table th {
+.welcomeSub {
   color: var(--text-secondary);
-  font-weight: 500;
   font-size: 0.875rem;
+}
+
+/* Section */
+.sectionTitle {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Actions Grid */
+.actionsSection {
+  margin-bottom: 2.5rem;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.actionCard {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.actionCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.actionIcon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.actionLabel {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.actionDesc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Profile Section */
+.profileSection {
+  margin-bottom: 2rem;
+}
+
+.profileCard {
+  padding: 0;
+  overflow: hidden;
+}
+
+.profileRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profileLabel {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.profileValue {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.badgeUser {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-secondary);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
 }

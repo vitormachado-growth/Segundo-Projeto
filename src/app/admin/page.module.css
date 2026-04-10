@@ -103,9 +103,11 @@
 }
 
 .statValue {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: 800;
   color: var(--accent-color);
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  letter-spacing: -0.02em;
 }
 
 .tableSection {
@@ -156,4 +158,29 @@
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 500;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--accent-color);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.statusBadge[data-status="Pendente"] {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.statusBadge[data-status="Cancelado"] {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff4d4d;
+  border-color: rgba(255, 0, 0, 0.2);
 }
