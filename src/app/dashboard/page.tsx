@@ -1,8 +1,5 @@
 'use client';
 
-// Desabilita a pré-renderização estática pois esta página requer autenticação
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';

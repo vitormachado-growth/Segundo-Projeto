@@ -6,31 +6,66 @@ import { createClient } from '@/lib/supabase/client';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
+    const supabase = createClient();
+
     const handleAuth = async () => {
-      // O Supabase lida automaticamente com a troca do código pelo token nos cookies
-      const { data, error } = await supabase.auth.getSession();
-      if (error || !data.session) {
-        console.error('AuthController Error:', error);
-        router.push('/login?error=auth_failed');
-      } else {
+      // Com o fluxo PKCE do Supabase, o código de autorização vem na query string
+      const code = new URLSearchParams(window.location.search).get('code');
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) {
+          console.error('Erro ao trocar código por sessão:', error.message);
+          router.push('/login?error=auth_failed');
+          return;
+        }
+      }
+
+      // Verifica se já tem sessão ativa (caso o token venha via hash)
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
         router.push('/dashboard');
+      } else {
+        router.push('/login?error=auth_failed');
       }
     };
 
     handleAuth();
-  }, [router, supabase]);
+  }, [router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-white p-6">
-      <div className="text-center max-w-md w-full glass-panel p-8">
-        <div className="mb-6 flex justify-center">
-            <div className="h-16 w-16 animate-spin rounded-full border-t-4 border-green-500 border-opacity-30 border-t-green-500 border-solid"></div>
-        </div>
-        <h2 className="text-2xl font-bold mb-2 heading-display">AUTENTICANDO...</h2>
-        <p className="text-gray-400">Só um momento, estamos preparando o seu acesso!</p>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: '#000',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff',
+        fontFamily: 'sans-serif',
+        padding: '2rem',
+      }}
+    >
+      <div style={{ textAlign: 'center' }}>
+        <div
+          style={{
+            width: '56px',
+            height: '56px',
+            border: '4px solid rgba(0,255,128,0.2)',
+            borderTop: '4px solid #00ff80',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 1.5rem',
+          }}
+        />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+          Autenticando...
+        </h2>
+        <p style={{ color: '#888' }}>Aguarde enquanto preparamos o seu acesso.</p>
       </div>
     </div>
   );
