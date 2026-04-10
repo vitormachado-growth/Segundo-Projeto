@@ -59,7 +59,7 @@ export default function AdminPage() {
         .select('full_name, email, role, created_at')
         .order('created_at', { ascending: false });
 
-      const activeUsers = allProfiles?.filter(p => p.role === 'user').length || 0;
+      const activeUsers = allProfiles?.filter((p: Profile) => p.role === 'user').length || 0;
 
       // 2. Busca Agendamentos e Estatísticas (Queries defensivas)
       const today = new Date();
