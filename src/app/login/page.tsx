@@ -25,10 +25,12 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
+    // Usa a URL de produção fixa para evitar redirecionamento para localhost
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${siteUrl}/auth/callback`,
       },
     });
   };
