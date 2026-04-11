@@ -13,7 +13,9 @@ import {
   Menu,
   X,
   LogOut,
-  User
+  User,
+  MapPin,
+  LayoutDashboard
 } from 'lucide-react';
 import styles from './Navbar.module.css';
 
@@ -100,18 +102,10 @@ const Navbar = () => {
             <Crown />
             <span>Clube</span>
           </Link>
-          
-          {user ? (
-            <button onClick={handleLogout} className={`${styles.navLink} ${styles.logoutLink}`}>
-              <LogOut />
-              <span>Sair</span>
-            </button>
-          ) : (
-            <Link href="/dashboard" className={styles.navLink}>
-              <User />
-              <span>Entrar</span>
-            </Link>
-          )}
+          <Link href={pathname === '/' ? '#units' : '/#units'} className={styles.navLink} scroll={true}>
+            <MapPin />
+            <span>Unidades</span>
+          </Link>
         </div>
 
         {/* Mobile Menu Button (Only visible on small screens) */}
@@ -139,16 +133,44 @@ const Navbar = () => {
         <Link href="/agendar" className={styles.mobileLink} onClick={toggleMenu}>
           <Calendar size={24} /> Agendar
         </Link>
-        
-        {user ? (
-          <button onClick={handleLogout} className={`${styles.mobileLink} ${styles.mobileLogout}`}>
-            <LogOut size={24} /> Sair Conta
-          </button>
+        <Link href={pathname === '/' ? '#units' : '/#units'} className={styles.mobileLink} onClick={toggleMenu} scroll={true}>
+          <MapPin size={24} /> Unidades
+        </Link>
+      </div>
+    </div>
+
+    {/* Floating User Ball */}
+    <div className={styles.floatingAction}>
+      <div className={styles.userBall}>
+        {user?.user_metadata?.avatar_url ? (
+          <img src={user.user_metadata.avatar_url} alt="User" className={styles.userAvatar} />
         ) : (
-          <Link href="/login" className={styles.mobileLink} onClick={toggleMenu}>
-            <User size={24} /> Entrar / Registrar
-          </Link>
+          <User size={24} />
         )}
+        
+        {/* Dropdown Menu */}
+        <div className={styles.userDropdown}>
+          <div className={styles.dropdownHeader}>
+            <span className={styles.userName}>
+              {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Visitante'}
+            </span>
+          </div>
+          <div className={styles.dropdownDivider} />
+          {user ? (
+            <>
+              <Link href="/dashboard" className={styles.dropdownItem}>
+                <LayoutDashboard size={18} /> Painel
+              </Link>
+              <button onClick={handleLogout} className={styles.dropdownItem}>
+                <LogOut size={18} /> Sair
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className={styles.dropdownItem}>
+              <User size={18} /> Entrar
+            </Link>
+          )}
+        </div>
       </div>
     </div>
     </>
