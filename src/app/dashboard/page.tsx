@@ -71,7 +71,15 @@ export default function DashboardPage() {
   return (
     <div className={styles.dashboard}>
       <header className={styles.header}>
-        <h1 className={`${styles.title} heading-display`}>VT'S BARBER</h1>
+        <Link href="/" className={styles.logoLink}>
+          <div className={styles.logoCircle}>
+            <img 
+              src="/vts-barber-logo.jpg" 
+              alt="VT'S BARBER" 
+              className={styles.logoImg} 
+            />
+          </div>
+        </Link>
         <div className={styles.headerRight}>
           <span className={styles.userEmail}>{profile?.email}</span>
           <button onClick={handleLogout} className={styles.logoutBtn}>Sair</button>
