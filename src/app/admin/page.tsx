@@ -38,37 +38,15 @@ export default function AdminPage() {
         return;
       }
 
-      // Diagnóstico de Acesso
-      console.log('[Admin Access] Iniciando verificação para:', user.id);
-      
-      const { data: profile, error: profileError } = await supabase
+      // Verifica se é admin
+      const { data: profile } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single();
 
       if (profile?.role !== 'admin') {
-        const errorDetail = profileError ? `Erro: ${profileError.message} (${profileError.code})` : 'A linha não foi encontrada no banco.';
-        const msg = `ACESSO NEGADO: Seu cargo é "${profile?.role || 'indefinido'}".`;
-        console.error(msg, profileError);
-        
-        // Injeta o erro na tela com detalhes técnicos
-        const debugDiv = document.createElement('div');
-        debugDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:red;color:white;padding:2rem;z-index:9999;text-align:center;border-radius:1rem;font-family:sans-serif;box-shadow:0 0 50px rgba(0,0,0,0.5);min-width:320px';
-        debugDiv.innerHTML = `
-          <h1 style="margin-bottom:1rem;font-size:1.5rem">ERRO DE PERMISSÃO</h1>
-          <p style="margin-bottom:1rem">${msg}</p>
-          <div style="background:rgba(0,0,0,0.2);padding:1rem;border-radius:0.5rem;font-size:0.8rem;text-align:left;margin-bottom:1rem">
-            <strong>Detalhe Técnico:</strong><br/>
-            ${errorDetail}
-          </div>
-          <p style="font-size:0.7rem;opacity:0.8">ID: ${user.id}</p>
-        `;
-        document.body.appendChild(debugDiv);
-
-        setTimeout(() => {
-          router.push('/dashboard');
-        }, 8000); // 8 segundos para dar tempo de ler o erro
+        router.push('/dashboard');
         return;
       }
 
