@@ -11,64 +11,55 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const supabase = createClient();
+    let redirected = false;
 
-    const handleAuth = async () => {
-      try {
-        // Aguarda o Supabase processar o token do hash (fluxo Implicit)
-        await new Promise(resolve => setTimeout(resolve, 800));
+    const redirect = async (user: any) => {
+      if (redirected) return;
+      redirected = true;
 
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      setStatus('Verificando permissões...');
 
-        if (sessionError || !session) {
-          // Fallback: tenta troca de código (PKCE)
-          const code = new URLSearchParams(window.location.search).get('code');
-          if (code) {
-            setStatus('Trocando código por sessão...');
-            const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-            if (exchangeError || !data.session) {
-              setError(exchangeError?.message || 'Sessão não encontrada.');
-              setTimeout(() => router.push('/login?error=auth_failed'), 3000);
-              return;
-            }
-          } else {
-            setError('Nenhuma sessão encontrada. Tente fazer login novamente.');
-            setTimeout(() => router.push('/login?error=no_session'), 3000);
-            return;
-          }
-        }
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
 
-        // Busca o sessão atualizada
-        const { data: { user } } = await supabase.auth.getUser();
+      setStatus('Redirecionando...');
 
-        if (!user) {
-          setError('Usuário não encontrado.');
-          setTimeout(() => router.push('/login'), 3000);
-          return;
-        }
-
-        // Busca o role do usuário para redirecionar corretamente
-        setStatus('Verificando permissões...');
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        setStatus('Redirecionando...');
-
-        if (profile?.role === 'admin') {
-          router.push('/admin');
-        } else {
-          router.push('/dashboard');
-        }
-
-      } catch (err: any) {
-        setError(`Erro inesperado: ${err.message}`);
-        setTimeout(() => router.push('/login?error=unexpected'), 3000);
+      if (profile?.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
       }
     };
 
-    handleAuth();
+    // Ouve o evento de login — funciona tanto para implicit quanto para PKCE
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        await redirect(session.user);
+      }
+    });
+
+    // Fallback: verifica se a sessão já existe (ex: reload da página de callback)
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        await redirect(session.user);
+      }
+    });
+
+    // Timeout de segurança: se em 8s não houver sessão, redireciona para login
+    const timeout = setTimeout(() => {
+      if (!redirected) {
+        setError('Não foi possível autenticar. Tente novamente.');
+        setTimeout(() => router.push('/login?error=timeout'), 3000);
+      }
+    }, 8000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, [router]);
 
   return (
