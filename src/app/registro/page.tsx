@@ -44,8 +44,20 @@ export default function RegistroPage() {
       setMessage('Erro ao criar conta: ' + error.message);
       setLoading(false);
     } else {
-      setMessage('Conta criada! Redirecionando...');
-      setTimeout(() => router.push('/dashboard'), 1500);
+      // Faz login imediatamente após o cadastro para garantir sessão ativa
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (loginError) {
+        setMessage('Conta criada! Faça login para continuar.');
+        setTimeout(() => router.push('/login'), 2000);
+        return;
+      }
+
+      setMessage('Conta criada com sucesso! Redirecionando...');
+      router.push('/dashboard');
     }
   };
 
