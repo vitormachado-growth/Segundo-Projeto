@@ -2,6 +2,10 @@ name = "segundo-projeto"
 compatibility_date = "2024-04-03"
 pages_build_output_dir = "out"
 
+[vars]
+NEXT_PUBLIC_SUPABASE_URL = "https://mkgbzejosjlbrnarnyup.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rZ2J6ZWpvc2psYnJuYXJueXVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDk2NjUsImV4cCI6MjA5MTQyNTY2NX0.-FPtyey17QEo0UCeQJS1OJhs0KwLANaJEkZIL3ls2t4"
+
 # Serve os arquivos estáticos gerados pelo Next.js (output: 'export')
 [assets]
 directory = "./out"
