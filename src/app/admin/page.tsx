@@ -38,15 +38,28 @@ export default function AdminPage() {
         return;
       }
 
-      // Verifica se é admin
-      const { data: profile } = await supabase
+      // Diagnóstico de Acesso
+      console.log('[Admin Access] Iniciando verificação para:', user.id);
+      
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
         .single();
 
       if (profile?.role !== 'admin') {
-        router.push('/dashboard');
+        const msg = `ACESSO NEGADO: Detectamos que seu cargo é "${profile?.role || 'indefinido'}". Redirecionando em 5 segundos...`;
+        console.error(msg, profileError);
+        
+        // Injeta o erro na tela para você ver
+        const debugDiv = document.createElement('div');
+        debugDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:red;color:white;padding:2rem;z-index:9999;text-align:center;border-radius:1rem;font-family:sans-serif;box-shadow:0 0 50px rgba(0,0,0,0.5)';
+        debugDiv.innerHTML = `<h1 style="margin-bottom:1rem">ERRO DE PERMISSÃO</h1><p>${msg}</p><p style="font-size:0.7rem;margin-top:1rem;opacity:0.8">ID: ${user.id}</p>`;
+        document.body.appendChild(debugDiv);
+
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 5000);
         return;
       }
 
