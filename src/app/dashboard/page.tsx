@@ -32,17 +32,26 @@ export default function DashboardPage() {
       // Busca perfil do usuário
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('full_name, email, avatar_url, role, created_at')
+        .select('full_name, avatar_url, role, created_at')
         .eq('id', user.id)
         .single();
 
+      // Prepara dados com fallback para o que vem do Auth
+      const enhancedProfile: Profile = {
+        full_name: profileData?.full_name || user.user_metadata?.full_name || 'Cliente',
+        email: user.email || null,
+        avatar_url: profileData?.avatar_url || user.user_metadata?.avatar_url || null,
+        role: profileData?.role || 'user',
+        created_at: profileData?.created_at || user.created_at,
+      };
+
       // Se for admin, redireciona para o painel admin
-      if (profileData?.role === 'admin') {
+      if (enhancedProfile.role === 'admin') {
         router.push('/admin');
         return;
       }
 
-      setProfile(profileData);
+      setProfile(enhancedProfile);
       setLoading(false);
     };
 
@@ -52,6 +61,25 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/login');
+  };
+
+  // Função para calcular tempo de membro de forma amigável
+  const getMembershipDuration = (dateString: string) => {
+    const start = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - start.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 1) return 'Hoje';
+    if (diffDays === 1) return '1 dia';
+    if (diffDays < 30) return `${diffDays} dias`;
+    
+    const diffMonths = Math.floor(diffDays / 30);
+    if (diffMonths === 1) return '1 mês';
+    if (diffMonths < 12) return `${diffMonths} meses`;
+    
+    const diffYears = Math.floor(diffMonths / 12);
+    return diffYears === 1 ? '1 ano' : `${diffYears} anos`;
   };
 
   if (loading) {
@@ -64,9 +92,11 @@ export default function DashboardPage() {
   }
 
   const firstName = profile?.full_name?.split(' ')[0] || 'Cliente';
-  const memberSince = profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+  const memberDate = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
     : '—';
+  
+  const duration = profile?.created_at ? getMembershipDuration(profile.created_at) : '';
 
   return (
     <div className={styles.dashboard}>
@@ -100,7 +130,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <h2 className={styles.welcomeTitle}>Olá, {firstName}! 👋</h2>
-            <p className={styles.welcomeSub}>Membro desde {memberSince}</p>
+            <p className={styles.welcomeSub}>Membro há {duration}</p>
           </div>
         </div>
       </section>
@@ -147,7 +177,7 @@ export default function DashboardPage() {
           </div>
           <div className={styles.profileRow} style={{ border: 'none' }}>
             <span className={styles.profileLabel}>Membro desde</span>
-            <span className={styles.profileValue}>{memberSince}</span>
+            <span className={styles.profileValue}>{memberDate} ({duration})</span>
           </div>
         </div>
       </section>
