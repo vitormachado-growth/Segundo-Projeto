@@ -3,6 +3,7 @@ import PricingCard from '@/components/PricingCard';
 import Navbar from '@/components/Navbar';
 import ScrollReveal from '@/components/ScrollReveal';
 import TestimonialsCarousel from '@/components/TestimonialsCarousel';
+import { MapPin, Phone, Clock } from 'lucide-react';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -139,6 +140,65 @@ export default function Home() {
             <Link href="/servicos" className={styles.btnSolidGold}>
               VER MENU COMPLETO DE SERVIÇOS
             </Link>
+          </div>
+        </ScrollReveal>
+      </section>
+
+      <section id="units" className={styles.unitsSection}>
+        <ScrollReveal animation="fade-up">
+          <div className={styles.unitsHeader}>
+            <h2 className={`${styles.sectionTitle} heading-display`}>ONDE NOS ENCONTRAR</h2>
+            <p className={styles.unitsSubtitle}>Visite nossa unidade principal e sinta a experiência VT'S</p>
+          </div>
+          
+          <div className={styles.unitsContainer}>
+            <div className={styles.mapContainer}>
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3678.887961234762!2d-43.3251466!3d-22.741868!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x997023488738c3%3A0x61cb6e7582b30d4f!2sT0P%20Barbearia!5e0!3m2!1spt-BR!2sbr!4v1712810000000!5m2!1spt-BR!2sbr" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen={true} 
+                loading="lazy" 
+                referrerPolicy="no-referrer-when-downgrade"
+                className={styles.mapIframe}
+              ></iframe>
+            </div>
+
+            <div className={styles.infoCard}>
+              <div className={`${styles.infoItem} glass-panel`}>
+                <div className={styles.infoIcon}>
+                  <MapPin size={24} />
+                </div>
+                <div className={styles.infoText}>
+                  <h3>Endereço</h3>
+                  <p>Av. Automóvel Clube, 2451</p>
+                  <p>São Mateus, São João de Meriti - RJ</p>
+                </div>
+              </div>
+
+              <div className={`${styles.infoItem} glass-panel`}>
+                <div className={styles.infoIcon}>
+                  <Phone size={24} />
+                </div>
+                <div className={styles.infoText}>
+                  <h3>Contato</h3>
+                  <p>(21) 99887-7665 (WhatsApp)</p>
+                  <p>(21) 3344-5566</p>
+                </div>
+              </div>
+
+              <div className={`${styles.infoItem} glass-panel`}>
+                <div className={styles.infoIcon}>
+                  <Clock size={24} />
+                </div>
+                <div className={styles.infoText}>
+                  <h3>Horário</h3>
+                  <p>Segunda - Sexta: 09h às 20h</p>
+                  <p>Sábado: 08h às 19h</p>
+                </div>
+              </div>
+            </div>
           </div>
         </ScrollReveal>
       </section>
