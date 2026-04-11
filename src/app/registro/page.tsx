@@ -57,7 +57,7 @@ export default function RegistroPage() {
       }
 
       setMessage('Conta criada com sucesso! Redirecionando...');
-      router.push('/dashboard');
+      router.push('/auth/setup');
     }
   };
 
