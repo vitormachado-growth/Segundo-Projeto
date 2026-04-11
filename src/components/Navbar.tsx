@@ -38,11 +38,11 @@ const Navbar = () => {
             <Home />
             <span>Início</span>
           </Link>
-          <Link href="#about" className={styles.navLink}>
+          <Link href="/#about" className={styles.navLink}>
             <Info />
             <span>Sobre</span>
           </Link>
-          <Link href="#pricing" className={styles.navLink}>
+          <Link href="/servicos" className={styles.navLink}>
             <Scissors />
             <span>Serviços</span>
           </Link>
@@ -63,7 +63,7 @@ const Navbar = () => {
 
         {/* Right Links */}
         <div className={`${styles.navGroup} ${styles.rightGroup}`}>
-          <Link href="/login" className={styles.navLink}>
+          <Link href="/agendar" className={styles.navLink}>
             <Calendar />
             <span>Agendar</span>
           </Link>
@@ -71,7 +71,7 @@ const Navbar = () => {
             <Crown />
             <span>Clube</span>
           </Link>
-          <Link href="#units" className={styles.navLink}>
+          <Link href="/#units" className={styles.navLink}>
             <MapPin />
             <span>Unidades</span>
           </Link>
@@ -90,7 +90,7 @@ const Navbar = () => {
         <Link href="/" className={styles.mobileLink} onClick={toggleMenu}>
           <Home size={24} /> Início
         </Link>
-        <Link href="#about" className={styles.mobileLink} onClick={toggleMenu}>
+        <Link href="/#about" className={styles.mobileLink} onClick={toggleMenu}>
           <Info size={24} /> Sobre
         </Link>
         <Link href="/servicos" className={styles.mobileLink} onClick={toggleMenu}>
@@ -99,10 +99,10 @@ const Navbar = () => {
         <Link href="/clube" className={styles.mobileLink} onClick={toggleMenu}>
           <Crown size={24} /> Clube
         </Link>
-        <Link href="/login" className={styles.mobileLink} onClick={toggleMenu}>
+        <Link href="/agendar" className={styles.mobileLink} onClick={toggleMenu}>
           <Calendar size={24} /> Agendar
         </Link>
-        <Link href="#units" className={styles.mobileLink} onClick={toggleMenu}>
+        <Link href="/#units" className={styles.mobileLink} onClick={toggleMenu}>
           <MapPin size={24} /> Unidades
         </Link>
       </div>
