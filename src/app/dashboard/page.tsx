@@ -213,22 +213,33 @@ export default function DashboardPage() {
                   if (key === 'Flutreta4#') {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (user) {
-                      const { error } = await supabase.from('profiles').update({ role: 'admin' }).eq('id', user.id);
+                      console.log('[Admin Update] Tentando atualizar ID:', user.id);
+                      // Usamos .select() para confirmar se alguma linha foi alterada
+                      const { data, error, count } = await supabase
+                        .from('profiles')
+                        .update({ role: 'admin' })
+                        .eq('id', user.id)
+                        .select();
+
                       if (error) {
                         console.error('[Admin Update Error]', error);
                         alert('Erro no banco de dados: ' + error.message);
-                        btn.innerText = originalText;
-                        btn.disabled = false;
+                      } else if (!data || data.length === 0) {
+                        console.warn('[Admin Update] Nenhuma linha encontrada para o ID:', user.id);
+                        alert(`Atenção: Sua conta foi encontrada, mas seu perfil não existe na tabela "profiles". \n\nSeu ID é: ${user.id}\n\nVerifique se este ID existe na tabela do Supabase.`);
+                      } else {
+                        console.log('[Admin Update] Sucesso! Novo role:', data[0].role);
+                        alert('Sucesso! Você agora é um Administrador. Redirecionando...');
+                        // Delay maior para garantir que o redirecionamento pegue o dado novo
+                        setTimeout(() => window.location.href = '/admin', 1500);
                         return;
                       }
-                      // Pequeno delay para garantir propagação no Supabase
-                      setTimeout(() => window.location.href = '/admin', 500);
                     }
                   } else {
                     alert('Chave incorreta');
-                    btn.innerText = originalText;
-                    btn.disabled = false;
                   }
+                  btn.innerText = originalText;
+                  btn.disabled = false;
                 }}
                 className="btn-primary"
                 style={{ padding: '0 1.5rem', height: '45px', margin: 0 }}
