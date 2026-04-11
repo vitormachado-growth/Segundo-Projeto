@@ -19,8 +19,19 @@ export default function SetupPage() {
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) {
-        router.push('/login');
+        // Aguarda 2 segundos e tenta de novo antes de desistir (resiliência para conexões lentas)
+        console.log('[Setup] Sessão não encontrada, tentando novamente em 2s...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const { data: { user: retryUser } } = await supabase.auth.getUser();
+        if (!retryUser) {
+          console.warn('[Setup] Segunda tentativa falhou, redirecionando para login.');
+          router.push('/login?error=session_not_found');
+          return;
+        }
+        setUser(retryUser);
         return;
       }
       setUser(user);

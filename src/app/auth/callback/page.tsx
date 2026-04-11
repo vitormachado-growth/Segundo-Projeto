@@ -23,8 +23,11 @@ export default function AuthCallbackPage() {
         .eq('id', user.id)
         .single();
 
-      // Lógica para detectar "Primeira Vez" (Registro novo)
-      const isNewUser = user.created_at === user.last_sign_in_at || !profile;
+      // Lógica robusta para detectar "Primeira Vez"
+      const createdAt = new Date(user.created_at).getTime();
+      const lastLogin = new Date(user.last_sign_in_at).getTime();
+      // Se a conta foi criada nos últimos 30 segundos, ou se não tem perfil, é novo.
+      const isNewUser = !profile || (lastLogin - createdAt < 30000);
 
       if (isNewUser) {
         router.push('/auth/setup');
@@ -62,9 +65,9 @@ export default function AuthCallbackPage() {
 
       const timeout = setTimeout(() => {
         if (!redirected) {
-          setError('Não foi possível identificar sua sessão. Tente novamente.');
+          setError('A autenticação está demorando mais que o esperado. Por favor, tente recarregar a página ou voltar ao login.');
         }
-      }, 15000);
+      }, 60000); // 60 segundos de timeout para conexões lentas
 
       return () => {
         subscription.unsubscribe();
