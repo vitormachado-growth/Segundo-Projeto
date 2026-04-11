@@ -37,10 +37,20 @@ export default function AuthCallbackPage() {
       // 1. Tenta pegar o código da URL (Fluxo PKCE padrão)
       const params = new URLSearchParams(window.location.search);
       const code = params.get('code');
+      
+      console.log('[AuthCallback] Iniciando verificação...', { 
+        hasCode: !!code, 
+        hash: window.location.hash ? 'Presente' : 'Vazio' 
+      });
 
       if (code) {
         setStatus('Trocando código por sessão...');
         const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        console.log('[AuthCallback] Resposta exchangeCode:', { 
+          success: !exchangeError, 
+          user: !!data.user 
+        });
+        
         if (!exchangeError && data.user) {
           await redirect(data.user);
           return;
@@ -49,6 +59,8 @@ export default function AuthCallbackPage() {
 
       // 2. Fallback: verifica se o Supabase já processou a sessão (ex: via hash no Implicit)
       const { data: { session } } = await supabase.auth.getSession() as { data: { session: Session | null } };
+      console.log('[AuthCallback] Verificação getSession:', { hasSession: !!session });
+      
       if (session?.user) {
         await redirect(session.user);
         return;
@@ -56,6 +68,7 @@ export default function AuthCallbackPage() {
 
       // 3. Listener: aguarda o evento de login caso o Supabase ainda esteja processando
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
+        console.log('[AuthCallback] Evento disparado:', event, { hasUser: !!session?.user });
         if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
           await redirect(session.user);
         }
