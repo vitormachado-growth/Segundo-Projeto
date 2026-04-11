@@ -204,15 +204,30 @@ export default function DashboardPage() {
               />
               <button 
                 onClick={async () => {
+                  const btn = (document.activeElement as HTMLButtonElement);
+                  const originalText = btn.innerText;
+                  btn.innerText = 'Ativando...';
+                  btn.disabled = true;
+
                   const key = (document.getElementById('admin-secret-key') as HTMLInputElement).value;
                   if (key === 'Flutreta4#') {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (user) {
-                      await supabase.from('profiles').update({ role: 'admin' }).eq('id', user.id);
-                      window.location.href = '/admin';
+                      const { error } = await supabase.from('profiles').update({ role: 'admin' }).eq('id', user.id);
+                      if (error) {
+                        console.error('[Admin Update Error]', error);
+                        alert('Erro no banco de dados: ' + error.message);
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        return;
+                      }
+                      // Pequeno delay para garantir propagação no Supabase
+                      setTimeout(() => window.location.href = '/admin', 500);
                     }
                   } else {
                     alert('Chave incorreta');
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                   }
                 }}
                 className="btn-primary"

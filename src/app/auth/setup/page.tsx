@@ -54,9 +54,15 @@ export default function SetupPage() {
         .update({ role: 'admin' })
         .eq('id', user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('[Setup Error]', updateError);
+        setError(`Erro ao atualizar banco: ${updateError.message}`);
+        setLoading(false);
+        return;
+      }
 
-      router.push('/admin');
+      // Pequeno pause para o banco processar a mudança
+      setTimeout(() => router.push('/admin'), 1000);
     } catch (err: any) {
       setError('Erro ao atualizar perfil: ' + err.message);
       setLoading(false);
