@@ -2,33 +2,60 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import { 
   Home, 
   Info, 
   Scissors, 
   Calendar, 
   Crown, 
-  MapPin, 
   Menu,
-  X
+  X,
+  LogOut,
+  User
 } from 'lucide-react';
 import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+
+    // Check current auth status
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkUser();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      subscription.unsubscribe();
+    };
+  }, [supabase.auth]);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+    setMenuOpen(false);
+  };
 
   return (
     <>
@@ -73,10 +100,18 @@ const Navbar = () => {
             <Crown />
             <span>Clube</span>
           </Link>
-          <Link href={pathname === '/' ? '#units' : '/#units'} className={styles.navLink} scroll={true}>
-            <MapPin />
-            <span>Unidades</span>
-          </Link>
+          
+          {user ? (
+            <button onClick={handleLogout} className={`${styles.navLink} ${styles.logoutLink}`}>
+              <LogOut />
+              <span>Sair</span>
+            </button>
+          ) : (
+            <Link href="/dashboard" className={styles.navLink}>
+              <User />
+              <span>Entrar</span>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button (Only visible on small screens) */}
@@ -104,9 +139,16 @@ const Navbar = () => {
         <Link href="/agendar" className={styles.mobileLink} onClick={toggleMenu}>
           <Calendar size={24} /> Agendar
         </Link>
-        <Link href={pathname === '/' ? '#units' : '/#units'} className={styles.mobileLink} onClick={toggleMenu} scroll={true}>
-          <MapPin size={24} /> Unidades
-        </Link>
+        
+        {user ? (
+          <button onClick={handleLogout} className={`${styles.mobileLink} ${styles.mobileLogout}`}>
+            <LogOut size={24} /> Sair Conta
+          </button>
+        ) : (
+          <Link href="/login" className={styles.mobileLink} onClick={toggleMenu}>
+            <User size={24} /> Entrar / Registrar
+          </Link>
+        )}
       </div>
     </div>
     </>
