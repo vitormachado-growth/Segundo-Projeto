@@ -18,15 +18,19 @@ export function createClient() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!url || !key) {
-    console.warn('[Supabase Client] Variáveis de ambiente ausentes — usando cliente dummy (build time)')
+    if (typeof window !== 'undefined') {
+      console.error('[Supabase Client] CRITICAL: Environment variables NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY are missing!')
+    }
     return dummyClient
   }
 
   return createBrowserClient(url, key, {
     auth: {
-      // Usa fluxo Implicit ao invés de PKCE
-      // PKCE requer armazenar o code_verifier que se perde em sites estáticos
-      flowType: 'implicit',
+      // PKCE é o padrão e mais robusto. 
+      // O Supabase JS lida com o code_verifier via localStorage automaticamente.
+      flowType: 'pkce',
+      persistSession: true,
+      detectSessionInUrl: true,
     },
   })
 }

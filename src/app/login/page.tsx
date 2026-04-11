@@ -49,11 +49,13 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    // Prioriza o origin atual para funcionar em Preview URLs e Localhost automaticamente
+    const origin = typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || '');
+    
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${siteUrl}/auth/callback`,
+        redirectTo: `${origin}/auth/callback`,
       },
     });
   };

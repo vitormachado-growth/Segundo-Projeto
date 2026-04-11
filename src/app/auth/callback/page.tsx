@@ -19,7 +19,6 @@ export default function AuthCallbackPage() {
       redirected = true;
 
       setStatus('Verificando permissões...');
-
       const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -27,7 +26,6 @@ export default function AuthCallbackPage() {
         .single();
 
       setStatus('Redirecionando...');
-
       if (profile?.role === 'admin') {
         router.push('/admin');
       } else {
@@ -35,32 +33,49 @@ export default function AuthCallbackPage() {
       }
     };
 
-    // Ouve o evento de login — funciona tanto para implicit quanto para PKCE
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-        await redirect(session.user);
-      }
-    });
+    const handleAuth = async () => {
+      // 1. Tenta pegar o código da URL (Fluxo PKCE padrão)
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
 
-    // Fallback: verifica se a sessão já existe (ex: reload da página de callback)
-    supabase.auth.getSession().then(async ({ data: { session } }: { data: { session: Session | null } }) => {
+      if (code) {
+        setStatus('Trocando código por sessão...');
+        const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (!exchangeError && data.user) {
+          await redirect(data.user);
+          return;
+        }
+      }
+
+      // 2. Fallback: verifica se o Supabase já processou a sessão (ex: via hash no Implicit)
+      const { data: { session } } = await supabase.auth.getSession() as { data: { session: Session | null } };
       if (session?.user) {
         await redirect(session.user);
+        return;
       }
-    });
 
-    // Timeout de segurança: se em 8s não houver sessão, redireciona para login
-    const timeout = setTimeout(() => {
-      if (!redirected) {
-        setError('Não foi possível autenticar. Tente novamente.');
-        setTimeout(() => router.push('/login?error=timeout'), 3000);
-      }
-    }, 8000);
+      // 3. Listener: aguarda o evento de login caso o Supabase ainda esteja processando
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
+        if (session?.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+          await redirect(session.user);
+        }
+      });
 
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
+      // Timeout de segurança: se em 10s não houver nada, algo falhou feio
+      const timeout = setTimeout(() => {
+        if (!redirected) {
+          setError('Tempo limite atingido. Certifique-se de que as chaves do Supabase estão corretas no Cloudflare.');
+          setTimeout(() => router.push('/login?error=timeout'), 4000);
+        }
+      }, 10000);
+
+      return () => {
+        subscription.unsubscribe();
+        clearTimeout(timeout);
+      };
     };
+
+    handleAuth();
   }, [router]);
 
   return (
