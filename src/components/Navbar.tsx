@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -21,17 +21,37 @@ import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const lastScrollY = useRef(0);
+  const rafId = useRef<number | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+    const onScroll = () => {
+      if (rafId.current !== null) return; // already scheduled
+      rafId.current = requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+
+        setScrolled(currentScrollY > 50);
+
+        if (currentScrollY > lastScrollY.current + 8 && currentScrollY > 150) {
+          // Scrolling down with a small dead-zone threshold
+          setVisible(false);
+        } else if (currentScrollY < lastScrollY.current - 8 || currentScrollY <= 150) {
+          // Scrolling up or near top
+          setVisible(true);
+        }
+
+        lastScrollY.current = currentScrollY;
+        rafId.current = null;
+      });
     };
-    window.addEventListener('scroll', handleScroll);
+
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     // Check current auth status
     const checkUser = async () => {
@@ -46,10 +66,12 @@ const Navbar = () => {
     });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', onScroll);
+      if (rafId.current !== null) cancelAnimationFrame(rafId.current);
       subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -61,7 +83,11 @@ const Navbar = () => {
 
   return (
     <>
-    <nav className={`${styles.navbarContainer} ${scrolled ? styles.navbarScrolled : ''}`}>
+    <nav className={`
+      ${styles.navbarContainer} 
+      ${scrolled ? styles.navbarScrolled : ''} 
+      ${!visible ? styles.navbarHidden : ''}
+    `}>
       <div className={styles.navPill}>
         {/* Left Links */}
         <div className={`${styles.navGroup} ${styles.leftGroup}`}>
@@ -140,7 +166,10 @@ const Navbar = () => {
     </div>
 
     {/* Floating User Ball */}
-    <div className={styles.floatingAction}>
+    <div className={`
+      ${styles.floatingAction} 
+      ${scrolled ? styles.floatingScrolled : ''}
+    `}>
       <div className={styles.userBall}>
         {user?.user_metadata?.avatar_url ? (
           <img src={user.user_metadata.avatar_url} alt="User" className={styles.userAvatar} />

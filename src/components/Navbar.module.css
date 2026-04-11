@@ -9,7 +9,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all var(--transition-normal);
+  transition: top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navPill {
@@ -25,7 +27,11 @@
   gap: 220px; /* More space in the middle for the absolute logo and breathing room */
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   position: relative;
-  transition: all var(--transition-normal);
+  transition: min-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              gap 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 80px; 
 }
 
@@ -152,7 +158,11 @@
   overflow: hidden;
   /* Strong 3D shadow */
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(212, 175, 55, 0.3);
-  transition: all var(--transition-normal);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logoImg {
@@ -171,6 +181,63 @@
   transform: translate3d(0, 5px, 0); /* Keeping the subtle float transition without scaling */
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.95), 0 0 20px rgba(212, 175, 55, 0.6);
   border-color: #fff;
+}
+
+/* Scrolled state: Aggressive Shrink */
+.navbarScrolled {
+  top: 15px;
+}
+
+.navbarScrolled .navPill {
+  min-height: 60px;
+  padding: 5px 60px;
+  gap: 140px;
+  background: rgba(10, 10, 10, 0.9);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.navbarScrolled .logoCircle {
+  width: 90px;
+  height: 90px;
+  transform: translateY(-5px);
+}
+
+.navbarScrolled .navLink svg {
+  width: 18px;
+  height: 18px;
+}
+
+.navbarScrolled .navLink span {
+  font-size: 11px;
+  bottom: -20px;
+}
+
+/* Hidden state: Auto-hide on scroll */
+.navbarHidden {
+  transform: translate3d(-50%, -180%, 0) !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Specific hidden for floating ball to avoid the -50% translateX */
+.floatingHidden {
+  transform: translateY(-150%) !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floatingScrolled {
+  top: 15px;
+  right: 20px;
+}
+
+.floatingScrolled .userBall {
+  width: 45px;
+  height: 45px;
 }
 
 /* Mobile Toggle - HIDDEN BY DEFAULT */
@@ -287,7 +354,13 @@
   cursor: pointer;
   color: var(--accent-color);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.2);
-  transition: all var(--transition-normal);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              top 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              right 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
