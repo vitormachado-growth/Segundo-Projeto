@@ -78,7 +78,7 @@ export default function Home() {
               Sem filas, sem perder tempo. Marque seu horário na melhor barbearia com apenas alguns cliques.
             </p>
             <div className={styles.ctaGroup} style={{ justifyContent: 'center' }}>
-              <Link href="/login" className="btn-primary">Agendar Agora</Link>
+              <Link href="/agendar" className="btn-primary">Agendar Agora</Link>
               <a href="#pricing" className="btn-secondary">Ver Serviços</a>
             </div>
           </ScrollReveal>

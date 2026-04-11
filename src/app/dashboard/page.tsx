@@ -111,11 +111,11 @@ export default function DashboardPage() {
             <span className={styles.actionLabel}>Clube VIP</span>
             <span className={styles.actionDesc}>Benefícios exclusivos para membros</span>
           </Link>
-          <div className={`${styles.actionCard} glass-panel`} style={{ cursor: 'default', opacity: 0.6 }}>
+          <Link href="/agendar" className={`${styles.actionCard} glass-panel`}>
             <span className={styles.actionIcon}>📅</span>
-            <span className={styles.actionLabel}>Meus Agendamentos</span>
-            <span className={styles.actionDesc}>Em breve...</span>
-          </div>
+            <span className={styles.actionLabel}>Agendar Horário</span>
+            <span className={styles.actionDesc}>Escolha sua data e serviço</span>
+          </Link>
         </div>
       </section>
 

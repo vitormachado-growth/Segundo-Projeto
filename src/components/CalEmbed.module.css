@@ -1,0 +1,19 @@
+.container {
+  width: 100%;
+  min-height: 600px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+  .container {
+    min-height: 500px;
+    border-radius: var(--radius-md);
+  }
+}
