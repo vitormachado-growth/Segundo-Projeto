@@ -181,6 +181,52 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
+
+      {/* Acesso Administrativo (Nova Seção) */}
+      <section className={styles.adminSection} style={{ marginTop: '4rem', paddingBottom: '4rem' }}>
+        <div 
+          onClick={() => (document.getElementById('admin-input-group') as HTMLElement).style.display = 'block'}
+          style={{ cursor: 'pointer', textAlign: 'center', opacity: 0.3 }}
+        >
+          <p style={{ fontSize: '0.7rem', letterSpacing: '0.2rem', color: '#444' }}>ÁREA ADMINISTRATIVA</p>
+        </div>
+        
+        <div id="admin-input-group" style={{ display: 'none', marginTop: '1.5rem', animation: 'fadeIn 0.5s ease-out' }}>
+          <div className="glass-panel" style={{ maxWidth: '400px', margin: '0 auto', padding: '1.5rem', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.8rem', color: '#d4af37', marginBottom: '1rem', fontWeight: 'bold' }}>INSIRA A CHAVE DE ACESSO</p>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input 
+                type="password" 
+                id="admin-secret-key"
+                placeholder="••••••••"
+                className="input-field"
+                style={{ flex: 1, margin: 0, height: '45px' }}
+              />
+              <button 
+                onClick={async () => {
+                  const key = (document.getElementById('admin-secret-key') as HTMLInputElement).value;
+                  if (key === 'Flutreta4#') {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                      await supabase.from('profiles').update({ role: 'admin' }).eq('id', user.id);
+                      window.location.href = '/admin';
+                    }
+                  } else {
+                    alert('Chave incorreta');
+                  }
+                }}
+                className="btn-primary"
+                style={{ padding: '0 1.5rem', height: '45px', margin: 0 }}
+              >
+                Ativar
+              </button>
+            </div>
+          </div>
+        </div>
+        <style>{`
+          @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        `}</style>
+      </section>
     </div>
   );
 }
