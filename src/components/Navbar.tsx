@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   Home, 
   Info, 
@@ -17,6 +18,7 @@ import styles from './Navbar.module.css';
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +40,7 @@ const Navbar = () => {
             <Home />
             <span>Início</span>
           </Link>
-          <Link href="/#about" className={styles.navLink}>
+          <Link href={pathname === '/' ? '#about' : '/#about'} className={styles.navLink} scroll={true}>
             <Info />
             <span>Sobre</span>
           </Link>
@@ -71,7 +73,7 @@ const Navbar = () => {
             <Crown />
             <span>Clube</span>
           </Link>
-          <Link href="/#units" className={styles.navLink}>
+          <Link href={pathname === '/' ? '#units' : '/#units'} className={styles.navLink} scroll={true}>
             <MapPin />
             <span>Unidades</span>
           </Link>
@@ -90,7 +92,7 @@ const Navbar = () => {
         <Link href="/" className={styles.mobileLink} onClick={toggleMenu}>
           <Home size={24} /> Início
         </Link>
-        <Link href="/#about" className={styles.mobileLink} onClick={toggleMenu}>
+        <Link href={pathname === '/' ? '#about' : '/#about'} className={styles.mobileLink} onClick={toggleMenu} scroll={true}>
           <Info size={24} /> Sobre
         </Link>
         <Link href="/servicos" className={styles.mobileLink} onClick={toggleMenu}>
@@ -102,7 +104,7 @@ const Navbar = () => {
         <Link href="/agendar" className={styles.mobileLink} onClick={toggleMenu}>
           <Calendar size={24} /> Agendar
         </Link>
-        <Link href="/#units" className={styles.mobileLink} onClick={toggleMenu}>
+        <Link href={pathname === '/' ? '#units' : '/#units'} className={styles.mobileLink} onClick={toggleMenu} scroll={true}>
           <MapPin size={24} /> Unidades
         </Link>
       </div>
