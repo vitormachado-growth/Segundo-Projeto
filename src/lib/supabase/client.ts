@@ -19,18 +19,20 @@ export function createClient() {
 
   if (!url || !key) {
     if (typeof window !== 'undefined') {
-      console.error('[Supabase Client] CRITICAL: Environment variables NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY are missing!')
+      console.error('[Supabase Client] CRITICAL ERROR: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY is undefined!')
+      console.log('[Supabase Client] Current ENV keys:', Object.keys(process.env).filter(k => k.startsWith('NEXT_PUBLIC_')))
     }
     return dummyClient
   }
 
+  console.log('[Supabase Client] Initializing with URL:', url.substring(0, 20) + '...')
+
   return createBrowserClient(url, key, {
     auth: {
-      // PKCE é o padrão e mais robusto. 
-      // O Supabase JS lida com o code_verifier via localStorage automaticamente.
       flowType: 'pkce',
       persistSession: true,
       detectSessionInUrl: true,
+      autoRefreshToken: true,
     },
   })
 }

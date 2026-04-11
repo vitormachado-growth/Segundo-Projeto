@@ -1,6 +1,6 @@
 name = "segundo-projeto"
-compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2024-04-03"
+pages_build_output_dir = "out"
 
 # Serve os arquivos estáticos gerados pelo Next.js (output: 'export')
 [assets]
