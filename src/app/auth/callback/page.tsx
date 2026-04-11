@@ -43,7 +43,7 @@ export default function AuthCallbackPage() {
     });
 
     // Fallback: verifica se a sessão já existe (ex: reload da página de callback)
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }: { data: { session: Session | null } }) => {
       if (session?.user) {
         await redirect(session.user);
       }
